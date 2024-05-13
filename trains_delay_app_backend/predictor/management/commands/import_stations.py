@@ -12,9 +12,14 @@ class Command(BaseCommand):
             'station_gps': 'POINT',
         }
 
-        # Path to your shapefile
-        shapefile = '/path/to/your/stations_gps.shp'
+        shapefilepath = 'predictor/source_files/stations_gps_crs_4326.shp'
 
-        # Mapping the shapefile fields to the model fields
-        lm = LayerMapping(Station, shapefile, mapping)
+        ds = DataSource(shapefilepath)
+        layer = ds[0]
+        print(layer.fields)
+        print(len(layer))  
+        print(layer.geom_type)  
+        print(layer.srs)
+
+        lm = LayerMapping(Station, ds, mapping, transform=True)
         lm.save(verbose=True)
