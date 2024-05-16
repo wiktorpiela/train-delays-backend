@@ -12,7 +12,7 @@ class Command(BaseCommand):
             'station_gps': 'POINT',
         }
 
-        shapefilepath = 'predictor/source_files/stations_gps_crs_4326.shp'
+        shapefilepath = 'predictor/source_files/stations_gps_crs_4326_utf8.shp'
 
         ds = DataSource(shapefilepath)
         layer = ds[0]
