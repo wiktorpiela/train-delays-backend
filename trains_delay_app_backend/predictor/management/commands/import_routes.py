@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.utils import LayerMapping
 from predictor.models import Route, Station
 import csv, os
 
@@ -45,17 +46,25 @@ class Command(BaseCommand):
         ds = DataSource(shapefile_path)
         layer = ds[0]
 
-        for feature in layer:
-            name = feature.get('key')
-            geom = feature.geom.geos 
+        # for feature in layer:
+        #     name = feature.get('route_name')
+        #     geom = feature.geom.geos 
 
-            route, created = Route.objects.get_or_create(route_name=name, defaults={'route_gps': geom})
-            if created:
-                self.stdout.write(self.style.SUCCESS(f'Created route: {name}'))
-            else:
-                route.route_gps = geom
-                route.save()
-                self.stdout.write(f'Updated route geometry: {name}')
+        #     route, created = Route.objects.get_or_create(route_name=name, defaults={'route_gps': geom})
+        #     if created:
+        #         self.stdout.write(self.style.SUCCESS(f'Created route: {name}'))
+        #     else:
+        #         route.route_gps = geom
+        #         route.save()
+        #         self.stdout.write(f'Updated route geometry: {name}')
+
+        mapping = {
+            'route_name': 'route_name',
+            'route_gps': 'LINESTRING',
+        }
+
+        lm = LayerMapping(Route, ds, mapping, transform=True)
+        lm.save(verbose=True)
 
         with open(csv_path, newline='') as csvfile:
             reader = csv.reader(csvfile)
