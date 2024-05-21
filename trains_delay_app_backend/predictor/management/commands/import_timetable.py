@@ -16,8 +16,8 @@ class Command(BaseCommand):
         with open(file_path, 'r') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                foreign_key1_id = row['route']
-                foreign_key2_id = row['station']
+                foreign_key1_id = row['route_id']
+                foreign_key2_id = row['station_id']
 
                 route_instance = Route.objects.get(id=foreign_key1_id)
                 station_instance = Station.objects.get(id=foreign_key2_id)
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 timetable_instance = Timetable.objects.create(
                     route=route_instance,
                     station=station_instance,
-                    arrival_time = row['arrival_time']
+                    arrival_time = row['arrival_time'],
                     departure_time = row['departure_time']
                 )
 
