@@ -12,9 +12,9 @@ class Route(models.Model):
     def fix_relation_name(self):
         rel_name = self.relation_name.split('_')[0]
         return rel_name
- 
-# class TimeTable(models.Model):
-#     relation = models.ForeignKey(Relation, related_name='timetable_relation', on_delete=models.DO_NOTHING)
-#     station = models.ForeignKey(Station, related_name='timetable_station', on_delete=models.DO_NOTHING)
-#     arrival_time = models.TimeField()
-#     departure_time = models.TimeField()
+
+class TimeTable(models.Model):
+    route = models.ForeignKey(Route, related_name='timetable_relation', on_delete=models.DO_NOTHING)
+    station = models.ForeignKey(Station, related_name='timetable_station', on_delete=models.DO_NOTHING)
+    arrival_time = models.TimeField()
+    departure_time = models.TimeField()
