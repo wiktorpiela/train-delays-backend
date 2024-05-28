@@ -8,7 +8,7 @@ class Station(models.Model):
         return self.station_name
     
 class Route(models.Model):
-    route_name = models.CharField(max_length=100)
+    route_name = models.CharField(max_length=500)
     route_gps = models.LineStringField(srid=4326)
 
     def fix_route_name(self):
