@@ -6,24 +6,27 @@ class Station(models.Model):
 
     def __str__(self) -> str:
         return self.station_name
-
+    
 class Route(models.Model):
-    route_name = models.CharField(max_length=500)
+    route_name = models.CharField(max_length=100)
     route_gps = models.LineStringField(srid=4326)
-    station = models.ManyToManyField(Station, related_name='route') #stations #routes
 
-    def fix_relation_name(self):
-        rel_name = self.relation_name.split('_')[0]
-        return rel_name
+    def fix_route_name(self):
+        route_name = self.route_name.split('_')[0]
+        return route_name
     
     def __str__(self) -> str:
         return self.route_name
-
+    
 class Timetable(models.Model):
-    route = models.ForeignKey(Route, related_name='timetable_relation', on_delete=models.DO_NOTHING)
-    station = models.ForeignKey(Station, related_name='timetable_station', on_delete=models.DO_NOTHING)
-    arrival_time = models.TimeField()
-    departure_time = models.TimeField()
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='timetables')
+    stations = models.ManyToManyField(Station, through='Schedule', related_name='timetables')
 
     def __str__(self) -> str:
-        return f'{self.route.route_name} - {self.station.station_name} - {self.arrival_time}'
+        return f'{self.route.route_name} - {self.stations.station_name}'
+
+class Schedule(models.Model):
+    timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE, related_name='schedules')
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='schedules')
+    arrival_time = models.TimeField()
+    departure_time = models.TimeField()
