@@ -6,13 +6,15 @@ from predictor.models import Station
 class Command(BaseCommand):
     help = 'Import stations from shapefile'
 
+    def add_arguments(self, parser):
+        parser.add_argument('shapefile_path', type=str, help='Path to the shapefile')
+
     def handle(self, *args, **kwargs):
+        shapefilepath = kwargs['shapefile_path']
         mapping = {
             'station_name': 'Stacja',
             'station_gps': 'POINT',
         }
-
-        shapefilepath = 'predictor/source_files/stations_gps_crs_4326_utf8.shp'
 
         ds = DataSource(shapefilepath)
         layer = ds[0]
