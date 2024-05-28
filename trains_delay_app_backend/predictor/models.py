@@ -10,7 +10,7 @@ class Station(models.Model):
 class Route(models.Model):
     route_name = models.CharField(max_length=500)
     route_gps = models.LineStringField(srid=4326)
-    station = models.ManyToManyField(Station, related_name='route')
+    station = models.ManyToManyField(Station, related_name='route') #stations #routes
 
     def fix_relation_name(self):
         rel_name = self.relation_name.split('_')[0]
