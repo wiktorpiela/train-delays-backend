@@ -1,6 +1,7 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import numpy as np
 
 from .models import Station, Route
 from .api.serializers import StationSerializer, RouteSerializer
@@ -21,43 +22,17 @@ class StationByRouteView(APIView):
         start_station = Station.objects.get(id=pk)
         routes = Route.objects.filter(stations=start_station)
 
-        # wektoryzacja na np array ------
-        stations_b = []
+        unique_stations = []
         for route in routes:
-            stations = route.stations.all()
-            for station in stations:
-                current_name = station.station_name
-                if current_name not in stations_b:
-                    stations_b.append(current_name)
+            current_route_stations = route.get_all_station_names()
+            unique_stations.append(current_route_stations)
+        unique_stations = list(set([item for sublist in unique_stations for item in sublist]))
 
-        route_names_list = []
-        stations = []
-        
-        # ['Węgliniec - Wrocław Główny', 'sadasd', 'asdasd']
-        # [['a', 'b', 'c', 'd'], ['x','y','z'], [],]
-        for route in routes:
-            print(f"{route.route_name.split('_')[0]} ------------- ")
-            all_stations = route.stations.all()
-            for station in all_stations:
-                print(station.station_name)
+        serializer = RouteSerializer(routes, many=True, fields=('route_name', 'all_station_names',))
 
-        serializer = RouteSerializer(routes, many=True, fields=('route_name','stations',))
+        # return Response({'stations': sorted(unique_stations)})
         return Response(serializer.data)
-        # return Response({'stations': sorted(stations_b)
-                         
-                         
-        #                  }, 
-                        #  'routes': [
-                        #      {
-                        #          'route_name': 'Węgliniec - Wrocław Główny',
-                        #          'route_stations': ['Wrocław Główny', 'Malczyce', ....]
-                        #      },
-                        #      {
-                        #         'route_name': 'Węgliniec - Wrocław Główny',
-                        #         'route_stations': ['Wrocław Główny', 'Malczyce', ....]
-                        #      }
-                        #  ]
-                        #  }
+    
 
     
 
