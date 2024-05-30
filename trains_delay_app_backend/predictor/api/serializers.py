@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Station, Route
+from ..models import Station, Route, Schedule
 from django.contrib.gis.geos import Point
 
 class StationSerializer(serializers.ModelSerializer):
@@ -18,19 +18,27 @@ class RouteSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
-    stations = serializers.SerializerMethodField()
+    all_station_names = serializers.SerializerMethodField()
+    stations = StationSerializer(many=True)
 
     class Meta:
         model = Route
         fields = '__all__'
 
-    def get_stations(self, obj):
+    def get_all_station_names(self, obj):
         unique_stations = []
         for station in obj.stations.all():
             current_name = station.station_name
             if current_name not in unique_stations:
                 unique_stations.append(current_name)
         return unique_stations
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        fixed_field_value = representation['route_name']
+        if fixed_field_value:
+            representation['route_name'] = fixed_field_value.split('_')[0]
+        return representation
 
 
     
