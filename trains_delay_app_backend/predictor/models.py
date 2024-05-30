@@ -19,6 +19,14 @@ class Route(models.Model):
     def __str__(self) -> str:
         return self.route_name
     
+    def get_all_station_names(self):
+        unique_stations = []
+        for station in self.stations.all():
+            current_name = station.station_name
+            if current_name not in unique_stations:
+                unique_stations.append(current_name)
+        return unique_stations
+    
 class Schedule(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='schedule_route')
     station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='schedule_station')
