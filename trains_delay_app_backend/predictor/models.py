@@ -37,3 +37,14 @@ class Schedule(models.Model):
 
     def __str__(self) -> str:
         return f'{self.route.route_name} - {self.station.station_name}'
+    
+class RailwayData(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='railway_data_route')
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='railway_data_station')
+    prev_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='railway_data_prev_station', blank=True, null=True)
+    next_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='railway_data_next_station', blank=True, null=True)
+    distance = models.DecimalField(decimal_places=20, max_digits=30)
+    duration = models.DecimalField(decimal_places=20, max_digits=30)
+    station_position = models.IntegerField()
+    level_crossings_odometer = models.IntegerField()
+    switches_odometer = models.IntegerField()
